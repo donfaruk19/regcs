@@ -68,36 +68,40 @@
         .marquee-track:hover {
             animation-play-state: paused; /* Pauses tip animation on mouse hover for easy reading */
         }
+        /* Force QR Code to render as a standard image so html2canvas and Printers can capture it */
+        #qrcodeTargetNode canvas { display: none !important; }
+        #qrcodeTargetNode img { display: block !important; visibility: visible !important; margin: 0 auto; }
+        
         /* =========================================================================
-           CRITICAL PRINT STYLING FORCE LAYER
+           REFINED PRINT STYLING FORCE LAYER
            ========================================================================= */
         @media print {
-            /* Hide every visual layout block on the landing page during print queue processing */
-            body * { visibility: hidden; }
-            /* Isolate the ticket container card exclusively */
-            #printablePassAssetCard, #printablePassAssetCard * { visibility: visible; }
+            body { visibility: hidden; background: white; }
             #printablePassAssetCard {
+                visibility: visible;
                 position: absolute;
                 left: 0;
                 top: 0;
                 width: 100% !important;
                 max-width: 550px !important;
-                background-color: #020617 !important; /* Forces slate-950 dark background */
+                background-color: #020617 !important;
                 color: #ffffff !important;
                 border: 1px solid #1e293b !important;
                 border-radius: 24px !important;
                 padding: 24px !important;
-                /* Overrides default browser ink-saver whiteouts */
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            /* Guarantee the QR code background box stays perfectly high-contrast white */
-            #qrcodeTargetNode, #qrcodeTargetNode * {
+            #qrcodeTargetNode {
                 background-color: #ffffff !important;
                 padding: 8px !important;
                 border-radius: 12px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
+            }
+            #qrcodeTargetNode img {
+                display: block !important;
+                visibility: visible !important;
             }
         }
     </style>
@@ -524,7 +528,7 @@
                 // Because 'no-cors' mode hides server text responses, we safely proceed to assemble 
                 // and show the verified client pass layout automatically upon successful transit completion.
                 
-                const systemSecurityTicketPayloadString = `STATUS:VERIFIED|UID:${dynamicallyAllocatedUID}|NAME:${certifiedCleanName}|ROLE:${certifiedCleanRole}|ORG:${certifiedCleanOrg}|VALIDATION:VALID ENTRY PASSKEY AUTHORIZED.`;
+                const systemSecurityTicketPayloadString = dynamicallyAllocatedUID;
 
                 qrcodeTargetNode.innerHTML = ""; // Clear existing target frames
 
@@ -571,7 +575,7 @@
             html2canvas(targetTicketCardNode, {
                 scale: 3,             // Triples the pixel resolution density to guarantee maximum scanning readability
                 useCORS: true,        // Bypasses resource image security boundaries safely
-                backgroundColor: null,  // Preserves internal layout styling rules perfectly
+                backgroundColor: "#020617", // Add color to replaced 'null' to prevent render crashy
                 onclone: (clonedDocument) => {
                     // Enforce structural dark mode utilities inside the virtual export DOM clone layer
                     const clonedCardContainer = clonedDocument.getElementById('printablePassAssetCard');
