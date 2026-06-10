@@ -573,18 +573,16 @@
 
             // Execute high-definition visual matrix cloning canvas conversion
             html2canvas(targetTicketCardNode, {
-                scale: 3,             // Triples the pixel resolution density to guarantee maximum scanning readability
-                useCORS: true,        // Bypasses resource image security boundaries safely
-                backgroundColor: "#020617", // Add color to replaced 'null' to prevent render crashy
+                scale: 3,             
+                useCORS: true,        
+                backgroundColor: "#020617", // FIX: Replaced 'null' to prevent render crash
                 onclone: (clonedDocument) => {
-                    // Enforce structural dark mode utilities inside the virtual export DOM clone layer
                     const clonedCardContainer = clonedDocument.getElementById('printablePassAssetCard');
                     if (clonedCardContainer) {
-                        clonedCardContainer.style.backgroundColor = "#020617"; // Enforce slate-950 color matching your image sample
-                        clonedCardContainer.style.borderColor = "#1e293b";     // Slate-800 border bounding lines
-                        clonedCardContainer.style.color = "#ffffff";           // Force crystal white text
+                        clonedCardContainer.style.backgroundColor = "#020617"; 
+                        clonedCardContainer.style.borderColor = "#1e293b";     
+                        clonedCardContainer.style.color = "#ffffff";           
                         
-                        // Style the ticket details headers inside the image file
                         const nameNode = clonedCardContainer.querySelector('#ticketCardName');
                         if(nameNode) nameNode.style.color = "#ffffff";
                         
