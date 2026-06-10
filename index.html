@@ -17,7 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
-        /* CSS Theme Variable Maps: Fixed fallback to ensure 100% theme switching reliability */
+        /* CSS Theme Variable Maps */
         :root {
             --bg-main: #f8fafc;
             --bg-surface: #ffffff;
@@ -48,14 +48,12 @@
         .theme-input { background-color: var(--bg-input) !important; border-color: var(--border-ui) !important; color: var(--text-main) !important; }
         .theme-text-muted { color: var(--text-muted) !important; }
 
-        /* Tactical background grid overlay design */
         .cyber-grid {
             background-image: linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
                               linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
             background-size: 40px 40px;
         }
 
-        /* Continuous CSS Marquee Ticker Setup */
         @keyframes marquee {
             0% { transform: translateX(0%); }
             100% { transform: translateX(-50%); }
@@ -66,42 +64,60 @@
             animation: marquee 35s linear infinite;
         }
         .marquee-track:hover {
-            animation-play-state: paused; /* Pauses tip animation on mouse hover for easy reading */
+            animation-play-state: paused;
         }
-        /* Force QR Code to render as a standard image so html2canvas and Printers can capture it */
+
+        /* Force QR Code to show image element correctly instead of the canvas node */
         #qrcodeTargetNode canvas { display: none !important; }
-        #qrcodeTargetNode img { display: block !important; visibility: visible !important; margin: 0 auto; }
-        
+        #qrcodeTargetNode img { display: block !important; margin: 0 auto !important; }
+
         /* =========================================================================
-           REFINED PRINT STYLING FORCE LAYER
+           ULTRA-STABLE COMPACT PRINT CONTROLS (Prevents 2-Page Spillovers)
            ========================================================================= */
         @media print {
-            body { visibility: hidden; background: white; }
-            #printablePassAssetCard {
-                visibility: visible;
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100% !important;
-                max-width: 550px !important;
-                background-color: #020617 !important;
+            @page {
+                size: 100mm 150mm; /* Sets a dedicated physical event badge dimension layout */
+                margin: 0;
+            }
+            html, body {
+                background: #020617 !important;
                 color: #ffffff !important;
-                border: 1px solid #1e293b !important;
-                border-radius: 24px !important;
-                padding: 24px !important;
+                width: 100mm !important;
+                height: 150mm !important;
+                overflow: hidden !important;
+                margin: 0 !important;
+                padding: 0 !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
+            }
+            /* Hide the underlying page layout completely */
+            body * { 
+                visibility: hidden !important; 
+            }
+            /* Isolate only the exact ticket asset pass */
+            #printablePassAssetCard, #printablePassAssetCard * { 
+                visibility: visible !important; 
+            }
+            #printablePassAssetCard {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100mm !important;
+                height: 150mm !important;
+                box-sizing: border-box !important;
+                background-color: #020617 !important;
+                border: none !important;
+                border-radius: 0px !important;
+                padding: 20px !important;
+                margin: 0 !important;
             }
             #qrcodeTargetNode {
                 background-color: #ffffff !important;
                 padding: 8px !important;
                 border-radius: 12px !important;
+                display: block !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
-            }
-            #qrcodeTargetNode img {
-                display: block !important;
-                visibility: visible !important;
             }
         }
     </style>
@@ -561,35 +577,47 @@
         });
         /**
          * 7. DATA EXPORT CONVERSION PIPELINE SYSTEM EXTRACTOR
-         * Captures the entire styled HTML card element and compiles it into a crisp dark PNG asset.
+         * Off-screen clone technique completely bypasses layout clipping bugs inside active modals.
          */
         downloadPassActionBtn.addEventListener('click', () => {
-            const targetTicketCardNode = document.getElementById('printablePassAssetCard');
-            
-            if (!targetTicketCardNode) {
+            const originalCardElement = document.getElementById('printablePassAssetCard');
+            if (!originalCardElement) {
                 alert("System pipeline error: Target ticket asset node wrapper not found.");
                 return;
             }
 
-            // Execute high-definition visual matrix cloning canvas conversion
-            html2canvas(targetTicketCardNode, {
-                scale: 3,             
-                useCORS: true,        
-                backgroundColor: "#020617", // FIX: Replaced 'null' to prevent render crash
-                onclone: (clonedDocument) => {
-                    const clonedCardContainer = clonedDocument.getElementById('printablePassAssetCard');
-                    if (clonedCardContainer) {
-                        clonedCardContainer.style.backgroundColor = "#020617"; 
-                        clonedCardContainer.style.borderColor = "#1e293b";     
-                        clonedCardContainer.style.color = "#ffffff";           
-                        
-                        const nameNode = clonedCardContainer.querySelector('#ticketCardName');
-                        if(nameNode) nameNode.style.color = "#ffffff";
-                        
-                        const orgNode = clonedCardContainer.querySelector('#ticketCardOrg');
-                        if(orgNode) orgNode.style.color = "#94a3b8";
-                    }
-                }
+            // Create a clean off-screen workspace clone element container
+            const offscreenContainer = document.createElement('div');
+            offscreenContainer.style.position = 'absolute';
+            offscreenContainer.style.top = '-9999px';
+            offscreenContainer.style.left = '-9999px';
+            offscreenContainer.style.width = '420px';
+            document.body.appendChild(offscreenContainer);
+
+            // Clone the layout inside our offscreen document block wrapper
+            const clonedCardElement = originalCardElement.cloneNode(true);
+            clonedCardElement.style.backgroundColor = "#020617";
+            clonedCardElement.style.color = "#ffffff";
+            clonedCardElement.style.border = "1px solid #1e293b";
+            clonedCardElement.style.borderRadius = "24px";
+            clonedCardElement.style.padding = "24px";
+            clonedCardElement.style.width = "420px";
+            
+            // Adjust individual internal card fonts inside the clean image output container file
+            const nameHeader = clonedCardElement.querySelector('#ticketCardName');
+            if (nameHeader) nameHeader.style.color = '#ffffff';
+            const affiliationText = clonedCardElement.querySelector('#ticketCardOrg');
+            if (affiliationText) affiliationText.style.color = '#94a3b8';
+
+            offscreenContainer.appendChild(clonedCardElement);
+
+            // Execute high definition conversion capture against the offscreen element layout frame
+            html2canvas(clonedCardElement, {
+                scale: 3,                 // Enhances QR code scaling definition metrics significantly
+                useCORS: true,           
+                backgroundColor: "#020617",
+                width: 420,
+                logging: false
             }).then(generatedCanvasElement => {
                 const formattedDataURIString = generatedCanvasElement.toDataURL("image/png");
                 const technicalAnchorTrigger = document.createElement('a');
@@ -599,9 +627,15 @@
                 document.body.appendChild(technicalAnchorTrigger);
                 technicalAnchorTrigger.click(); 
                 document.body.removeChild(technicalAnchorTrigger);
+                
+                // Purge temporary off-screen workspace variables out of system memory
+                document.body.removeChild(offscreenContainer);
             }).catch(systemCaptureError => {
-                console.error("Compilation failure:", systemCaptureError);
+                console.error("Compilation failure details:", systemCaptureError);
                 alert("Cryptographic asset processing error. Could not compile full layout card.");
+                if (document.body.contains(offscreenContainer)) {
+                    document.body.removeChild(offscreenContainer);
+                }
             });
         });
     </script>
