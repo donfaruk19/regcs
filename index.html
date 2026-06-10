@@ -68,6 +68,38 @@
         .marquee-track:hover {
             animation-play-state: paused; /* Pauses tip animation on mouse hover for easy reading */
         }
+        /* =========================================================================
+           CRITICAL PRINT STYLING FORCE LAYER
+           ========================================================================= */
+        @media print {
+            /* Hide every visual layout block on the landing page during print queue processing */
+            body * { visibility: hidden; }
+            /* Isolate the ticket container card exclusively */
+            #printablePassAssetCard, #printablePassAssetCard * { visibility: visible; }
+            #printablePassAssetCard {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100% !important;
+                max-width: 550px !important;
+                background-color: #020617 !important; /* Forces slate-950 dark background */
+                color: #ffffff !important;
+                border: 1px solid #1e293b !important;
+                border-radius: 24px !important;
+                padding: 24px !important;
+                /* Overrides default browser ink-saver whiteouts */
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            /* Guarantee the QR code background box stays perfectly high-contrast white */
+            #qrcodeTargetNode, #qrcodeTargetNode * {
+                background-color: #ffffff !important;
+                padding: 8px !important;
+                border-radius: 12px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen transition-colors duration-300 cyber-grid relative overflow-x-hidden selection:bg-cyan-500 selection:text-slate-950 flex flex-col">
@@ -525,15 +557,7 @@
         });
         /**
          * 7. DATA EXPORT CONVERSION PIPELINE SYSTEM EXTRACTOR
-         */
-        /**
-         * 7. DATA EXPORT CONVERSION PIPELINE SYSTEM EXTRACTOR
-         * Captures the entire styled HTML card element and compiles it into a crisp downloadable PNG asset.
-         */
-        d/**
-         * 7. DATA EXPORT CONVERSION PIPELINE SYSTEM EXTRACTOR
-         * Captures the entire styled HTML card element and compiles it into a crisp downloadable PNG asset.
-         * Enforces a hard dark-theme configuration inside the snapshot layer context.
+         * Captures the entire styled HTML card element and compiles it into a crisp dark PNG asset.
          */
         downloadPassActionBtn.addEventListener('click', () => {
             const targetTicketCardNode = document.getElementById('printablePassAssetCard');
@@ -545,35 +569,34 @@
 
             // Execute high-definition visual matrix cloning canvas conversion
             html2canvas(targetTicketCardNode, {
-                scale: 3,            // Triples the pixel resolution density to guarantee maximum scanning readability
-                useCORS: true,       // Bypasses resource image security boundaries safely
-                backgroundColor: null, // Preserves internal layout styling rules perfectly
-                
-                // CRITICAL INSIGHT ACTION: Manipulate the virtual DOM tree clone before rendering pixels
+                scale: 3,             // Triples the pixel resolution density to guarantee maximum scanning readability
+                useCORS: true,        // Bypasses resource image security boundaries safely
+                backgroundColor: null,  // Preserves internal layout styling rules perfectly
                 onclone: (clonedDocument) => {
-                    // Force the root element of the cloned document to adopt the 'dark' utility class
-                    clonedDocument.documentElement.classList.add('dark');
-                    
-                    // Explicitly pull the card target node inside the cloned instance 
+                    // Enforce structural dark mode utilities inside the virtual export DOM clone layer
                     const clonedCardContainer = clonedDocument.getElementById('printablePassAssetCard');
                     if (clonedCardContainer) {
-                        // Enforce specific custom style overrides directly onto the final container asset to maximize contrast
-                        clonedCardContainer.style.backgroundColor = "#020617"; // Deep Slate-950 Core
-                        clonedCardContainer.style.borderColor = "#1e293b";     // Slate-800 Boundary Line
+                        clonedCardContainer.style.backgroundColor = "#020617"; // Enforce slate-950 color matching your image sample
+                        clonedCardContainer.style.borderColor = "#1e293b";     // Slate-800 border bounding lines
+                        clonedCardContainer.style.color = "#ffffff";           // Force crystal white text
+                        
+                        // Style the ticket details headers inside the image file
+                        const nameNode = clonedCardContainer.querySelector('#ticketCardName');
+                        if(nameNode) nameNode.style.color = "#ffffff";
+                        
+                        const orgNode = clonedCardContainer.querySelector('#ticketCardOrg');
+                        if(orgNode) orgNode.style.color = "#94a3b8";
                     }
                 }
             }).then(generatedCanvasElement => {
-                // Convert compiled canvas data into a standard PNG base64 stream link
                 const formattedDataURIString = generatedCanvasElement.toDataURL("image/png");
-                
-                // Build a temporary secure transmission anchor to execute download pipeline
                 const technicalAnchorTrigger = document.createElement('a');
                 technicalAnchorTrigger.href = formattedDataURIString;
                 technicalAnchorTrigger.download = `CyberSentry_SummitPass_${Date.now()}.png`;
                 
                 document.body.appendChild(technicalAnchorTrigger);
-                technicalAnchorTrigger.click(); // Force client system file save action
-                document.body.removeChild(technicalAnchorTrigger); // Instantly drop tracking artifact out of DOM
+                technicalAnchorTrigger.click(); 
+                document.body.removeChild(technicalAnchorTrigger);
             }).catch(systemCaptureError => {
                 console.error("Compilation failure:", systemCaptureError);
                 alert("Cryptographic asset processing error. Could not compile full layout card.");
