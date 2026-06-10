@@ -530,6 +530,11 @@
          * 7. DATA EXPORT CONVERSION PIPELINE SYSTEM EXTRACTOR
          * Captures the entire styled HTML card element and compiles it into a crisp downloadable PNG asset.
          */
+        d/**
+         * 7. DATA EXPORT CONVERSION PIPELINE SYSTEM EXTRACTOR
+         * Captures the entire styled HTML card element and compiles it into a crisp downloadable PNG asset.
+         * Enforces a hard dark-theme configuration inside the snapshot layer context.
+         */
         downloadPassActionBtn.addEventListener('click', () => {
             const targetTicketCardNode = document.getElementById('printablePassAssetCard');
             
@@ -542,7 +547,21 @@
             html2canvas(targetTicketCardNode, {
                 scale: 3,            // Triples the pixel resolution density to guarantee maximum scanning readability
                 useCORS: true,       // Bypasses resource image security boundaries safely
-                backgroundColor: null // Preserves internal layout styling rules perfectly
+                backgroundColor: null, // Preserves internal layout styling rules perfectly
+                
+                // CRITICAL INSIGHT ACTION: Manipulate the virtual DOM tree clone before rendering pixels
+                onclone: (clonedDocument) => {
+                    // Force the root element of the cloned document to adopt the 'dark' utility class
+                    clonedDocument.documentElement.classList.add('dark');
+                    
+                    // Explicitly pull the card target node inside the cloned instance 
+                    const clonedCardContainer = clonedDocument.getElementById('printablePassAssetCard');
+                    if (clonedCardContainer) {
+                        // Enforce specific custom style overrides directly onto the final container asset to maximize contrast
+                        clonedCardContainer.style.backgroundColor = "#020617"; // Deep Slate-950 Core
+                        clonedCardContainer.style.borderColor = "#1e293b";     // Slate-800 Boundary Line
+                    }
+                }
             }).then(generatedCanvasElement => {
                 // Convert compiled canvas data into a standard PNG base64 stream link
                 const formattedDataURIString = generatedCanvasElement.toDataURL("image/png");
