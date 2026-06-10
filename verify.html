@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="./manifest.json">
     <title>Digital Sentry - Perimeter Access Control</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -74,8 +75,8 @@
 
     <!-- Verification Logic Architecture Scripts -->
     <script>
-        // Paste your exact deployed Google Apps Script Web App URL right here
-        const DATABASE_API_URL = "YOUR_DEPLOYED_GOOGLE_WEB_APP_URL_HERE";
+        // Paste exact deployed Google Apps Script Web App URL right here
+        const DATABASE_API_URL = "https://script.google.com/macros/s/AKfycbxgmDq46BK4uerjj_CSWqmsLHpt0fSBgBnMluCQl_onZrklP0oY0m3wkGkUf7XBd69q2g/exec";
 
         const html5QrcodeScanner = new Html5Qrcode("reader");
         let isProcessingScan = false;
@@ -180,6 +181,14 @@
         ).catch(err => {
             readyState.innerHTML = `<p class="text-rose-500 text-xs font-bold">CAMERA INITIALIZATION FAILURE: Please authorize video permissions.</p>`;
         });
+        // Progressive Web App service script registration entry point 
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Digital Sentry Service Worker Registered Success.'))
+                    .catch(err => console.error('Service worker registration failed:', err));
+            });
+        }
     </script>
 </body>
 </html>
