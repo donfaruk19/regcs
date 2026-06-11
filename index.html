@@ -533,6 +533,8 @@
                 body: JSON.stringify(payloadData)
             })
             .then(() => {
+                // the long inclusure of the dataset will give error do the fetching for the google sheet, the second will send only the id gen for virification to the backend
+                // i commented the first for ref purpose
                 // const systemSecurityTicketPayloadString = `STATUS:VERIFIED|UID:${dynamicallyAllocatedUID}|NAME:${certifiedCleanName}|ROLE:${certifiedCleanRole}|ORG:${certifiedCleanOrg}|VALIDATION:VALID ENTRY PASSKEY AUTHORIZED.`;
                 // The verifier expects ONLY the clean UID to query the database.
                 const systemSecurityTicketPayloadString = dynamicallyAllocatedUID;
