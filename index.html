@@ -533,8 +533,9 @@
                 body: JSON.stringify(payloadData)
             })
             .then(() => {
-                const systemSecurityTicketPayloadString = `STATUS:VERIFIED|UID:${dynamicallyAllocatedUID}|NAME:${certifiedCleanName}|ROLE:${certifiedCleanRole}|ORG:${certifiedCleanOrg}|VALIDATION:VALID ENTRY PASSKEY AUTHORIZED.`;
-
+                // const systemSecurityTicketPayloadString = `STATUS:VERIFIED|UID:${dynamicallyAllocatedUID}|NAME:${certifiedCleanName}|ROLE:${certifiedCleanRole}|ORG:${certifiedCleanOrg}|VALIDATION:VALID ENTRY PASSKEY AUTHORIZED.`;
+                // The verifier expects ONLY the clean UID to query the database.
+                const systemSecurityTicketPayloadString = dynamicallyAllocatedUID;
                 qrcodeTargetNode.innerHTML = "";
 
                 compiledQRCodeReference = new QRCode(qrcodeTargetNode, {
