@@ -106,7 +106,6 @@
                 <p class="text-emerald-500 text-xs font-bold tracking-widest uppercase">Querying Central Registry Backend...</p>
             `;
 
-            // EXTREMELY RELIABLE: Read the clean, raw UID directly from the matrix data stream
             const ticketUID = decodedText.trim();
 
             if (!ticketUID) {
@@ -114,17 +113,17 @@
                 return;
             }
 
-            // Fire verification request package out to the Google Sheets database endpoint API
-            // Fire verification packet out using a simple request to bypass CORS preflight blocks
+            // FIXED: Changed mode to "cors" so response data can be read by .json() without throwing a failure
             fetch(DATABASE_API_URL, {
                 method: "POST",
-                mode: "no-cors", 
-                // We use text/plain content type intentionally to bypass the preflight CORS security check.
-                // Google Apps Script reads the string contents cleanly inside e.postData.contents.
-                headers: { "Content-Type": "text/plain" },
+                mode: "cors", 
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "verify", uid: ticketUID })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error("Network handshake validation rejected.");
+                return response.json();
+            })
             .then(data => {
                 resetBtn.classList.remove('hidden');
                 readyState.classList.add('hidden');
@@ -134,24 +133,23 @@
                     resRole.textContent = data.role.toUpperCase();
                     resOrg.textContent = data.org.toUpperCase();
                     resUid.textContent = `UID: ${ticketUID}`;
-                    
+            
                     grantedState.classList.remove('hidden');
                     document.getElementById('response-panel').className = "mt-6 min-h-[140px] flex flex-col items-center justify-center text-center p-4 rounded-lg bg-emerald-950/20 border border-emerald-500/40";
                 } 
                 else if (data.status === "compromised" || data.status === "invalid") {
                     resDenyMessage.textContent = data.message;
                     resDenyName.textContent = data.name ? `ASSIGNED TO: ${data.name}` : "UNAUTHORIZED SIGNATURE";
-                    
+            
                     deniedState.classList.remove('hidden');
                     document.getElementById('response-panel').className = "mt-6 min-h-[140px] flex flex-col items-center justify-center text-center p-4 rounded-lg bg-rose-950/20 border border-rose-500/40";
                 }
             })
             .catch(error => {
                 console.error(error);
-                showSystemFailure("NETWORK TIMEOUT", "Database lookup handshake failed.");
+                showSystemFailure("PERIMETER BLOCK", "Database lookup handshake failed or access revoked.");
             });
         }
-
         function showSystemFailure(title, msg) {
             resetBtn.classList.remove('hidden');
             readyState.classList.add('hidden');
