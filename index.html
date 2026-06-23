@@ -301,28 +301,28 @@
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5 mono">Full Legal Identity Name</label>
+                        <label for="formName" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5 mono">Full Legal Identity Name</label>
                         <input type="text" id="formName" required maxlength="80" placeholder="e.g., Prof. Alex Carter" 
-                            class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition duration-150">
+                            class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition duration-150">
                     </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5 mono">Communications Email</label>
+                            <label for="formEmail" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5 mono">Communications Email</label>
                             <input type="email" id="formEmail" required maxlength="100" placeholder="alex@institution.edu" 
-                                class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition duration-150">
+                                class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition duration-150">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5 mono">Contact Telephone</label>
+                            <label for="formPhone" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5 mono">Contact Telephone</label>
                             <input type="tel" id="formPhone" required maxlength="20" placeholder="+2348000000000" 
-                                class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition duration-150">
+                                class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition duration-150">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5 mono">Summit Operational Role Rule</label>
-                            <select id="formRole" required class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition duration-150 cursor-pointer">
+                            <label for="formRole" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5 mono">Summit Operational Role Rule</label>
+                            <select id="formRole" required class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition duration-150 cursor-pointer">
                                 <option value="" disabled selected hidden>Choose assignment rule...</option>
                                 <option value="PARTICIPANT">Standard Attendee / Participant</option>
                                 <option value="PRESENTER">Presenter / Resource Person</option>
@@ -331,10 +331,11 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5 mono">Affiliated Corporate Entity</label>
+                            <label for="formOrg" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5 mono">Affiliated Corporate Entity</label>
                             <input type="text" id="formOrg" required maxlength="100" placeholder="e.g., Cyber Security Institute" 
-                                class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition duration-150">
+                                class="w-full theme-input border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition duration-150">
                         </div>
+                    </div>
                     </div>
 
                     <div class="pt-4">
@@ -531,7 +532,7 @@ attendeeForm.addEventListener('submit', function(formSubmissionEvent) {
     // FIXED: Switched to mode: "cors" with text/plain to execute an optimized Simple Request
     fetch(DATABASE_API_URL, {
         method: "POST",
-        mode: "cors",
+        mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payloadData)
     })
