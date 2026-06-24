@@ -528,41 +528,48 @@ attendeeForm.addEventListener('submit', function(formSubmissionEvent) {
         org: certifiedCleanOrg
     };
 
-    // FIXED: Switched to mode: "cors" with text/plain to execute an optimized Simple Request
-    fetch(DATABASE_API_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payloadData)
-    })
-    .then(() => {
-        const systemSecurityTicketPayloadString = dynamicallyAllocatedUID;
-        qrcodeTargetNode.innerHTML = "";
+    // Restored CORS and added Response Parsing
+            fetch(DATABASE_API_URL, {
+                method: "POST", 
+                mode: "cors", // Changed back to cors to read the database reply
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "register", uid, name, email, phone, role, org })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Network redirect failed");
+                return response.json();
+            })
+            .then(data => {
+                // THE CRITICAL CHECK: Did the database reject the entry?
+                if (data.status === "denied") {
+                    alert("REGISTRATION REJECTED: " + data.message);
+                    modalLoadingView.classList.add('hidden');
+                    modalFormView.classList.remove('hidden');
+                    return; // Stop the function here!
+                }
+                
+                // If the database confirms a successful write:
+                if (data.status === "success") {
+                    qrcodeTargetNode.innerHTML = "";
+                    compiledQRCodeReference = new QRCode(qrcodeTargetNode, {
+                        text: uid, width: 160, height: 160, colorDark: "#004024", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
+                    });
 
-        compiledQRCodeReference = new QRCode(qrcodeTargetNode, {
-            text: systemSecurityTicketPayloadString,
-            width: 160,
-            height: 160,
-            colorDark: "#020617",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-        });
+                    document.getElementById('ticketCardRole').textContent = `RULE: ${role}`;
+                    document.getElementById('ticketCardName').textContent = name;
+                    document.getElementById('ticketCardUID').textContent = uid;
+                    document.getElementById('ticketCardOrg').textContent = `AFFILIATION: ${org}`;
 
-        document.getElementById('ticketCardRole').textContent = `RULE: ${certifiedCleanRole}`;
-        document.getElementById('ticketCardName').textContent = certifiedCleanName;
-        document.getElementById('ticketCardUID').textContent = dynamicallyAllocatedUID;
-        document.getElementById('ticketCardOrg').textContent = `AFFILIATION: ${certifiedCleanOrg}`;
-
-        modalLoadingView.classList.add('hidden');
-        modalSuccessView.classList.remove('hidden');
-    })
-    .catch(error => {
-        console.error("Transmission error:", error);
-        alert("Database network synchronization failed. Please check your system connection.");
-        modalLoadingView.classList.add('hidden');
-        modalFormView.classList.remove('hidden');
-    });
-});
+                    modalLoadingView.classList.add('hidden');
+                    modalSuccessView.classList.remove('hidden');
+                }
+            })
+            .catch(error => {
+                alert("Network communication dropped. Check console for details.");
+                console.error(error);
+                modalLoadingView.classList.add('hidden');
+                modalFormView.classList.remove('hidden');
+            });
 
         /* =========================================================================
            DATA EXPORT CONVERSION PIPELINE SYSTEM EXTRACTOR (SAFE FROM OKLCH)
