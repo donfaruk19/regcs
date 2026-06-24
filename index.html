@@ -516,7 +516,7 @@ attendeeForm.addEventListener('submit', function(formSubmissionEvent) {
     const proceduralIdentityRandomSequence = Math.floor(100000 + Math.random() * 900000);
     const dynamicallyAllocatedUID = `CS-2026-${proceduralIdentityRandomSequence}`;
 
-    const DATABASE_API_URL = "https://script.google.com/macros/s/AKfycby8cEVA249IWT4RGdJPc_g5AHZZ_gu1zNHH6GUVUcpE1dGnJkuLICV1RmF6Rldo1o08/exec";
+    const DATABASE_API_URL = "https://script.google.com/macros/s/AKfycbzeL1b95uvip3I-15N-siUgqx3emLssmumRXfKf5WDQdhvu_98ajDcp5xyPH9RggnA-hw/exec";
 
     const payloadData = {
         action: "register",
@@ -527,7 +527,6 @@ attendeeForm.addEventListener('submit', function(formSubmissionEvent) {
         role: certifiedCleanRole,
         org: certifiedCleanOrg
     };
-});
     // Restored CORS and added Response Parsing
             fetch(DATABASE_API_URL, {
                 method: "POST", 
@@ -570,7 +569,7 @@ attendeeForm.addEventListener('submit', function(formSubmissionEvent) {
                 modalLoadingView.classList.add('hidden');
                 modalFormView.classList.remove('hidden');
             });
-
+        });
         /* =========================================================================
            DATA EXPORT CONVERSION PIPELINE SYSTEM EXTRACTOR (SAFE FROM OKLCH)
            ========================================================================= */
