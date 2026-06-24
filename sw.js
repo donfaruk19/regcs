@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sentry-cache-v1';
+const CACHE_NAME = 'sentry-cache-v2'; // Bumped from v1 to v2 to force update
 const ASSETS = [
   './index.html',
   './verify.html',
